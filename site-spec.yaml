@@ -1,0 +1,1046 @@
+openapi: 3.0.3
+info:
+  title: Goovi ID
+  version: "1.0"
+  description: GOOVI ID Website spec
+servers:
+  - url: "https://api.goovi.id"
+  - url: "http://localhost:8080"
+paths:
+  /transcodes:
+    get:
+      description: Get list transcode
+      tags:
+        - transcode
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return transcode jobs"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TranscodeQueue"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /transcode:
+    get:
+      description: Get a transcode
+      parameters:
+        - $ref: "#/components/parameters/id"
+      tags:
+        - transcode
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return transcode job"
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/TranscodeQueue"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      description: Create Queue
+      tags:
+        - transcode
+      security:
+        - Token: []
+        - Refresh: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTranscode"
+      responses:
+        "200":
+          description: "Add Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      description: Cancel Queue
+      tags:
+        - transcode
+      parameters:
+        - $ref: "#/components/parameters/id"
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Cancel Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+            $ref: "#/components/responses/ServerError"
+  /compress:
+    post:
+      description: Create Compress
+      tags:
+        - transcode
+      security:
+        - ApiKey: ["create_queue"]   
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCompress"
+      responses:
+        "200":
+          description: "Add Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /auth/google:
+    post:
+      description: Make google login
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SocialLoginReq"
+      responses:
+        "200":
+          description: "Login Succes"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /auth/logout:
+    post:
+      description: Logout
+      tags:
+        - auth
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Logout Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /team:
+    get:
+      description: Get MY Team
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return my team"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyTeamModel"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      description: Delete team member
+      tags:
+        - team
+      parameters:
+        - $ref: "#/components/parameters/id"
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return my team"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyTeamModel"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /team/member:
+    get:
+      description: Get Team Member
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return my team member"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamMember"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /team/membership:
+    get:
+      description: Get My Membership
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return my team membership"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamMember"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /team/invite:
+    get:
+      description: Get Invitation of team
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return team invitation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamInvitation"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      description: Invite a member
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamInvitationRequest"
+      responses:
+        "200":
+          description: "Invite Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      description: Cancel Invitation
+      tags:
+        - team
+      parameters:
+        - name: member_email
+          in: query
+          description: Identifier or the object
+          schema:
+            type: string
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Delete Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /team/role:
+    post:
+      description: Set Role of team
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamInvitationRequest"
+      responses:
+        "200":
+          description: "Invite Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /team/invitation:
+    get:
+      description: Get Invitation to me
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return invitation to me"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamInvitation"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      description: Response to invitation
+      tags:
+        - team
+      security:
+        - Token: []
+        - Refresh: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamInvitatioUserResponse"
+      responses:
+        "200":
+          description: "Invite Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /team/switch:
+    get:
+      description: Switch team
+      parameters:
+        - $ref: "#/components/parameters/id"
+      tags:
+        - team
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Succes
+          headers:
+            cookie-token:
+              schema:
+                type: string
+              description: Cookie token for Auth user (Http-only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /team/leave:
+    delete:
+      description: Leave from team
+      tags:
+        - team
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Sukses
+          headers:
+            cookie-token:
+              schema:
+                type: string
+              description: Cookie token for Auth user (Http-only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /key:
+    get:
+      description: Get Team Key
+      tags:
+        - keys
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return team key"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Keys"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      description: Add new key
+      tags:
+        - keys
+      security:
+        - Token: []
+        - Refresh: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KeyRequest"
+      responses:
+        "200":
+          description: "Add Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      description: Delete Key
+      tags:
+        - keys
+      parameters:
+        - $ref: "#/components/parameters/id"
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Delete Succes"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /billing:
+    get:
+      description: Get my billing
+      tags:
+        - billing
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return my billing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyBilling"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /billing/charge/history:
+    get:
+      description: Get my billing
+      tags:
+        - billing
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return my billing charge history"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChargeHistory"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /billing/deposit/history:
+    get:
+      description: Get deposit history
+      tags:
+        - billing
+      security:
+        - Token: []
+        - Refresh: []
+      responses:
+        "200":
+          description: "Return my billing charge history"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DepositModel"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /billing/deposit/recharge:
+    post:
+      description: Recharge billing
+      tags:
+        - billing
+      security:
+        - Token: []
+        - Refresh: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepositRequest"
+      responses:
+        "200":
+          description: "Return my billing charge history"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepositResponse"
+        "400":
+          $ref: "#/components/responses/ErrorOrRequestMalfunction"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+components:
+  schemas:
+    CallbackModel:
+      type: object
+      properties:
+        is_success:
+          type: boolean
+        queue_id:
+          type: string
+        error:
+          $ref: "#/components/schemas/TranscodeError"
+        media:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/MediaInfo" 
+    TranscodeQueue:
+      type: object
+      properties:
+        queue_id:
+          type: string
+        merchant_given_id:
+          type: string           
+        queue_status:
+          type: string
+        charge_status:
+          type: string
+        total_price:
+          type: number
+        created_at:
+          type: string
+          format: date-time
+        resolution_target:
+          type: array
+          items:
+            type: string
+        file_target:
+          type: array
+          items:
+            type: string
+        request_duration:
+          type: integer
+        source:
+          $ref: "#/components/schemas/SourceTranscode"
+        destination:
+          $ref: "#/components/schemas/SourceTranscode"
+        billing_detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/BillingDetail"
+        media:
+          $ref: "#/components/schemas/MediaInfo"
+        transcode_meta:
+          $ref: "#/components/schemas/TranscodeMeta"
+        error:
+          $ref: "#/components/schemas/TranscodeError"
+    CreateTranscode:
+      type: object
+      properties:
+        merchant_given_id:
+          type: string
+        resolution_target:
+          type: array
+          items:
+            type: string
+        file_target:
+          type: array
+          items:
+            type: string
+        callback_url:
+          type: string
+          nullable: true
+        callback_data:
+          type: string
+          format: base64
+          nullable: true  
+        mute:
+          type: boolean
+          description: Mute Video    
+        duration_in_second:
+          type: integer
+          nullable: true
+        source:
+          $ref: "#/components/schemas/SourceTranscode"
+        destination:
+          $ref: "#/components/schemas/SourceTranscode"
+    CreateCompress:
+      type: object
+      properties:
+        merchant_given_id:
+          type: string
+        callback_url:
+          type: string
+          nullable: true  
+        callback_data:
+          type: string
+          format: base64
+          nullable: true    
+        sizes:
+          type: array
+          items:
+            type: integer          
+        source:
+          $ref: "#/components/schemas/SourceTranscode"  
+        destination:
+          $ref: "#/components/schemas/SourceTranscode"      
+    MediaInfo:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+        mime:
+          type: string
+        size:
+          type: integer
+        size_human:
+          type: string
+        remote_url:
+          type: string
+        remote_relative_url:
+          type: string
+        video:
+          $ref: "#/components/schemas/VideoInfo"
+        audio:
+          $ref: "#/components/schemas/AudioInfo"
+        image:
+          $ref: "#/components/schemas/ImageInfo"
+        adaptive_streaming:
+          $ref: "#/components/schemas/AdaptiveStreamingInfo"  
+    VideoInfo:
+      type: object
+      nullable: true
+      properties:
+        is_hdr:
+          type: boolean
+        is_multi_channel_audio:
+          type: boolean
+        width:
+          type: integer
+        height:
+          type: integer
+        fps:
+          type: number
+        codec_name:
+          type: string
+        codec_type:
+          type: string
+        resolution_human:
+          type: string
+        bitrate:
+          type: string
+        display_aspect_ratio:
+          type: string
+        aspect_ratio:
+          type: number
+        duration:
+          type: number
+    AudioInfo:
+      type: object
+      nullable: true
+      properties:
+        bitrate:
+          type: string
+        frequency:
+          type: string
+        type:
+          type: string
+        channel_number:
+          type: integer
+        channel_name:
+          type: string
+        duration:
+          type: number
+        audio_channel:
+          type: number
+    ImageInfo:
+      type: object
+      nullable: true
+      properties:
+        image_type:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    AdaptiveStreamingInfo:
+      type: object
+      nullable: true
+      properties:
+        type:
+          type: string
+        file_type:
+          type: string
+        is_video:
+          type: boolean
+        display_aspect_ratio: 
+          type: string
+          nullable: true
+        aspect_ratio:
+          type: number
+          nullable: true
+        duration:
+          type: number
+        fps:  
+          type: number  
+          nullable: true
+    TranscodeMeta:
+      type: object
+      nullable: true
+      properties:
+        process_start_at:
+          type: string
+          format: date-time
+        process_end_at:
+          type: string
+          format: date-time
+        process_duration:
+          type: number
+        transcode_start_at:
+          type: string
+          format: date-time
+        transcode_end_at:
+          type: string
+          format: date-time
+        transcode_duration:
+          type: number
+    TranscodeError:
+      type: object
+      nullable: true
+      properties:
+        error_type:
+          type: string
+        error_cause:
+          type: string
+        error_at:
+          type: string
+          format: date-time
+    SourceTranscode:
+      type: object
+      properties:
+        url:
+          type: string
+        access_key_id:
+          type: string
+        access_key_secret:
+          type: string
+
+    DepositModel:
+      type: object
+      properties:
+        request_amount:
+          type: integer
+        amount:
+          type: integer
+        tax:
+          type: integer
+        deposit_id:
+          type: string
+        status:
+          type: string
+        midtrans_token:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    DepositResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    DepositRequest:
+      type: object
+      properties:
+        request_amount:
+          type: integer
+    ChargeHistory:
+      type: object
+      properties:
+        total_sent:
+          type: integer
+        chargeID:
+          type: string
+        total_amount:
+          type: number
+        detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/BillingDetail"
+        till:
+          type: string
+          format: date-time
+        from:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+    MyBilling:
+      type: object
+      properties:
+        credit:
+          type: number
+        deposit_total:
+          type: number
+        expense_total:
+          type: number
+        expense_detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/BillingDetail"
+        last_update:
+          type: string
+          format: date-time
+    BillingDetail:
+      type: object
+      properties:
+        qty:
+          type: integer
+        method:
+          type: string
+        total:
+          type: number
+        price:
+          type: number
+    RequestDetail:
+      type: object
+      properties:
+        method:
+          type: string
+        total:
+          type: integer
+        qty:
+          type: integer
+        validated:
+          type: integer
+    KeyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+    Keys:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        key_view:
+          type: string
+        capabilities:
+          type: array
+          items:
+            type: string
+    TeamInvitatioUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        response:
+          type: boolean
+    TeamInvitation:
+      type: object
+      properties:
+        teamID:
+          type: string
+        member_id:
+          type: string
+        invitationID:
+          type: string
+        invitationAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+        member:
+          $ref: "#/components/schemas/TeamMember"
+    TeamInvitationRequest:
+      type: object
+      properties:
+        member_email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+    TeamMember:
+      type: object
+      properties:
+        joinAt:
+          type: string
+          format: date-time
+        roles:
+          type: array
+          items:
+            type: string
+        roleLabel:
+          type: array
+          items:
+            type: string
+        team:
+          $ref: "#/components/schemas/TeamSnippet"
+        user:
+          $ref: "#/components/schemas/UserSnippet"
+    MyTeamModel:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/TeamSnippet"
+        approved:
+          type: boolean
+    TeamSnippet:
+      type: object
+      properties:
+        teamID:
+          type: string
+        name:
+          type: string
+        teamOwnerID:
+          type: string
+        avatarurl:
+          type: string
+        badge:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        userdata:
+          $ref: "#/components/schemas/UserSnippet"
+        token:
+          type: string
+        refresh:
+          type: string
+        teamID:
+          type: string
+        teamRoles:
+          type: array
+          items:
+            type: string
+        roles:
+          type: array
+          items:
+            type: string
+    UserSnippet:
+      type: object
+      properties:
+        userID:
+          type: string
+          uniqueItems: true
+        name:
+          type: string
+        email:
+          type: string
+        avatarurl:
+          type: string
+    ApproveUser:
+      type: object
+      properties:
+        teamID:
+          type: string
+        acc:
+          type: boolean
+    SocialLoginReq:
+      type: object
+      properties:
+        token:
+          type: string
+        appsource:
+          type: string
+
+  responses:
+    ErrorOrRequestMalfunction:
+      description: Request Malfunction missing argument, properties or invalid data
+      content:
+        text/plain:
+          schema:
+            type: string
+    ServerError:
+      description: Server Error
+      content:
+        text/plain:
+          schema:
+            type: string
+  parameters:
+    id:
+      name: id
+      in: query
+      description: Identifier or the object
+      schema:
+        type: string
+  securitySchemes:
+    ApiKey: # arbitrary name for the security scheme
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    Token:
+      type: apiKey
+      in: header
+      name: token
+    Refresh:
+      type: apiKey
+      in: header
+      name: token

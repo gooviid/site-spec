@@ -1,0 +1,12 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate API TS",
+            "type": "shell",
+            "command": "openapi-generator-cli generate -i ./site-spec.yaml -g typescript-fetch -o . --additional-properties=npmName=goovisite,supportsES6=true,npmVersion=1.0.2"
+        }
+    ]
+}
